@@ -1,6 +1,6 @@
 # coc-pydocstring
 
-[doq](https://pypi.org/project/doq/) (python docstring generator) extension [coc.nvim](https://github.com/neoclide/coc.nvim)
+[doq](https://pypi.org/project/doq/) (python docstring generator) extension for [coc.nvim](https://github.com/neoclide/coc.nvim)
 
 ## Install
 
