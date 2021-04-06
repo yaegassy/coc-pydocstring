@@ -38,8 +38,11 @@ Quickly generate docstrings for python.
 
 ## Commands
 
-- `pydocstring.install`: Install doq
 - `pydocstring.run`: Run doq for file
+- `pydocstring.install`: Install doq
+  - It will be installed in this path:
+    - Mac/Linux: `~/.config/coc/extensions/coc-pydocstring-data/doq/venv/bin/doq`
+    - Windows: `~/AppData/Local/coc/extensions/coc-pydocstring-data/doq/venv/bin/doq`
 
 ## Similar plugins
 
