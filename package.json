@@ -86,17 +86,17 @@
           "default": false,
           "description": "Enable file-level code action"
         }
+      }
+    },
+    "commands": [
+      {
+        "command": "pydocstring.install",
+        "title": "Install doq"
       },
-      "commands": [
-        {
-          "command": "pydocstring.install",
-          "title": "Install doq"
-        },
-        {
-          "command": "pydocstring.run",
-          "title": "Run doq for file"
-        }
-      ]
-    }
+      {
+        "command": "pydocstring.run",
+        "title": "Run doq for file"
+      }
+    ]
   }
 }
