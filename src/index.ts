@@ -59,6 +59,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
           }
         }
 
+        // ---- TODO: refacotr ----
+
         let endLine = range.end.line;
         let endCharacter = doc.getline(range.end.character).length;
 
@@ -71,8 +73,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
         const endLineIndentLength = endLineFullLength - endLineTrimLength;
         endCharacter = range.end.character + endLineIndentLength;
 
-        // For class, adjust
         if (doc.getline(range.start.line).match(/\s*class\s*.*:/)) {
+          endCharacter = 0;
+          endLine = range.end.line + 1;
+        }
+
+        if (doc.getline(range.start.line).match(/\s*def\s*.*/)) {
           endCharacter = 0;
           endLine = range.end.line + 1;
         }
@@ -82,6 +88,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
           { line: range.start.line, character: range.start.character - startLineIndentLength },
           { line: endLine, character: endCharacter }
         );
+
+        // ---- /TODO: refacotr ----
 
         // If there are no changes to the text, early return
         if (document.getText() === code) {
