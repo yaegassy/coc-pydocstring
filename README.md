@@ -46,12 +46,12 @@ Quickly generate docstrings for python.
 
 ## Similar plugins
 
-- [vim-pydocstring](https://github.com/heavenshell/vim-pydocstring)
+- [heavenshell/vim-pydocstring](https://github.com/heavenshell/vim-pydocstring)
   - This is a vim plugin by the author of doq.
 
 ## Thanks
 
-- [py-doq](https://github.com/heavenshell/py-doq) | [doq](https://pypi.org/project/doq/)
+- [heavenshell/py-doq](https://github.com/heavenshell/py-doq) | [doq](https://pypi.org/project/doq/)
 
 ## License
 
