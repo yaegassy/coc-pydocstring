@@ -83,6 +83,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
           { line: endLine, character: endCharacter }
         );
 
+        // If there are no changes to the text, early return
+        if (document.getText() === code) {
+          return;
+        }
+
         edits = [TextEdit.replace(range, code)];
         if (edits) {
           return await doc.applyEdits(edits);
