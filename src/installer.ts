@@ -6,6 +6,8 @@ import rimraf from 'rimraf';
 import child_process from 'child_process';
 import util from 'util';
 
+import { DOQ_VERSION } from './constant';
+
 const exec = util.promisify(child_process.exec);
 
 export async function doqInstall(context: ExtensionContext): Promise<void> {
@@ -19,7 +21,7 @@ export async function doqInstall(context: ExtensionContext): Promise<void> {
   rimraf.sync(pathVenv);
   try {
     window.showMessage(`Install doq ...`);
-    await exec(`python3 -m venv ${pathVenv} && ` + `${pathPip} install -U pip doq`);
+    await exec(`python3 -m venv ${pathVenv} && ` + `${pathPip} install -U pip doq==${DOQ_VERSION}`);
     statusItem.hide();
     window.showMessage(`doq: installed!`);
   } catch (error) {
