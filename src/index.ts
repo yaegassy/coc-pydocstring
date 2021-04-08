@@ -118,7 +118,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 async function installWrapper(context: ExtensionContext) {
-  const msg = '"doq" is not found, install "doq"?';
+  const msg = 'Install/Upgrade "doq"?';
 
   let ret = 0;
   ret = await window.showQuickpick(['Yes', 'Cancel'], msg);
