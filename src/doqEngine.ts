@@ -61,9 +61,9 @@ export async function doFormat(
 
   // ---- Output the command to be executed to channel log. ----
   outputChannel.appendLine(`${'#'.repeat(10)} pydocstring exec\n`);
-  outputChannel.appendLine(`Run: ${doqPath} ${args.join(' ')} ${tmpFile.name}\n`);
-  outputChannel.appendLine(`doqPath: ${doqPath}\n`);
-  outputChannel.appendLine(`args: ${args.join(' ')} ${tmpFile.name}\n`);
+  outputChannel.appendLine(`Run: ${doqPath} ${args.join(' ')} ${tmpFile.name}`);
+  outputChannel.appendLine(`doqPath: ${doqPath}`);
+  outputChannel.appendLine(`args: ${args.join(' ')}`);
   outputChannel.appendLine(`tmpFile: ${tmpFile.name}\n`);
 
   return new Promise(function (resolve) {
