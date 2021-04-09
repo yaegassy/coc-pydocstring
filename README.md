@@ -8,7 +8,9 @@
 
 **CocInstall**:
 
-> TODO
+```vim
+:CocInstall coc-pydocstring
+```
 
 **vim-plug**:
 
