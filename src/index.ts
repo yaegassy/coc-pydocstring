@@ -73,12 +73,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
         const endLineIndentLength = endLineFullLength - endLineTrimLength;
         endCharacter = range.end.character + endLineIndentLength;
 
-        if (doc.getline(range.start.line).match(/\s*class\s*.*:/)) {
-          endCharacter = 0;
-          endLine = range.end.line + 1;
-        }
-
-        if (doc.getline(range.start.line).match(/\s*def\s*.*/)) {
+        if (
+          doc.getline(range.start.line).match(/\s*class\s*.*/) ||
+          doc.getline(range.start.line).match(/\s*def\s*.*/)
+        ) {
           endCharacter = 0;
           endLine = range.end.line + 1;
         }

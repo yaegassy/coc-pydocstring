@@ -33,6 +33,7 @@ Quickly generate docstrings for python.
 
 - `Add docstirng for "Line" by pydocstring`
 - `Add docstirng for "Range" by pydocstring`
+  - In the case of range action, please select up to the line containing the end string of the function definition. e.g. `):`, `) -> Dummy:`, `]:`
 - `Add docstirng for "File" by pydocstring`
   - File-level code actions are disabled (false) by default.
 

@@ -12,41 +12,34 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
 
     /** Line */
     if (range.start.line === range.end.line && range.start.character === 0) {
-      const fullTextLine = doc.getLines().length;
+      // To match the style of the range type (zero base)
+      const fullRangeLength = doc.getLines().length - 1;
 
-      let endBlockLine = range.end.line;
-      let endBlockCharacter = range.end.character;
+      let endBlockRangeLine = range.end.line;
+      let funcOrClassSuffixLine = range.end.line;
 
-      // Line: range.start.line -> ++
-      for (let i = range.start.line; i < fullTextLine; i++) {
-        if (
-          doc.getline(i).endsWith('):') ||
-          doc.getline(i).match(/\):/) ||
-          doc.getline(i).match(/\]:/) ||
-          doc.getline(i).match(/\s*class\s*.*:/) ||
-          doc.getline(i).match(/.*\)\s->\s.*:/)
-        ) {
-          endBlockLine = i + 1;
-          endBlockCharacter = doc.getline(i).length;
+      for (let i = range.start.line; i <= fullRangeLength; i++) {
+        if (this.validLineOfFuncOrClassSuffix(doc.getline(i))) {
+          funcOrClassSuffixLine = i;
+          break;
+        }
+      }
+
+      // "doq" cannot process the "--end" option if the line is empty or a #,
+      // it further loops to check for lines with other strings.
+      for (let i = funcOrClassSuffixLine; i <= fullRangeLength; i++) {
+        if (i !== funcOrClassSuffixLine && doc.getline(i).trim() !== '' && !doc.getline(i).trim().startsWith('#')) {
+          endBlockRangeLine = i;
           break;
         }
       }
 
       const resolveRange = Range.create(
         { character: range.start.character, line: range.start.line },
-        { character: endBlockCharacter, line: endBlockLine }
+        { character: range.end.character, line: endBlockRangeLine }
       );
 
-      if (
-        doc
-          .getline(range.start.line)
-          .trim()
-          .match(/^def\s*/) ||
-        doc
-          .getline(range.start.line)
-          .trim()
-          .match(/^class\s*.*/)
-      ) {
+      if (this.validDocstringStartLine(doc, range)) {
         const title = `Add docstirng for "Line" by pydocstring`;
         const command = {
           title: '',
@@ -65,47 +58,40 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
 
     /** Range */
     if (range.start.line < range.end.line && !this.wholeRange(doc, range)) {
-      const fullTextLine = doc.getLines().length;
+      // To match the style of the range type (zero base)
+      const fullRangeLength = doc.getLines().length - 1;
 
-      let endBlockLine = range.end.line;
-      let endBlockCharacter = range.end.character;
+      let endBlockRangeLine = range.end.line;
 
-      // Range: range.end.line -> --
-      for (let i = range.end.line; i < fullTextLine; i--) {
+      let hasFuncOrClassSuffix = false;
+      for (let i = range.start.line; i <= range.end.line; i++) {
+        if (this.validLineOfFuncOrClassSuffix(doc.getline(i))) {
+          hasFuncOrClassSuffix = true;
+          endBlockRangeLine = endBlockRangeLine + 1;
+        }
+      }
+
+      // "doq" cannot process the "--end" option if the line is empty or a #,
+      // it further loops to check for lines with other strings.
+      for (let i = endBlockRangeLine; i <= fullRangeLength; i++) {
         if (
-          doc.getline(i).endsWith('):') ||
-          doc.getline(i).match(/\):/) ||
-          doc.getline(i).match(/\]:/) ||
-          doc.getline(i).match(/\s*class\s*.*:/) ||
-          doc.getline(i).match(/.*\)\s->\s.*:/)
+          doc.getline(i + 1).trim() !== '' &&
+          !doc
+            .getline(i + 1)
+            .trim()
+            .startsWith('#')
         ) {
-          endBlockLine = i + 1;
-          endBlockCharacter = doc.getline(i).length;
+          endBlockRangeLine = i + 1;
           break;
         }
       }
 
       const resolveRange = Range.create(
         { character: range.start.character, line: range.start.line },
-        { character: endBlockCharacter, line: endBlockLine }
+        { character: range.end.character, line: endBlockRangeLine }
       );
 
-      if (range.start.line >= endBlockLine) {
-        return;
-      }
-
-      if (
-        doc
-          .getline(range.start.line)
-          .slice(range.start.character)
-          .trim()
-          .match(/^def\s*/) ||
-        doc
-          .getline(range.start.line)
-          .slice(range.start.character)
-          .trim()
-          .match(/^class\s*.*/)
-      ) {
+      if (this.validDocstringStartLine(doc, range) && hasFuncOrClassSuffix) {
         const title = `Add docstirng for "Range" by pydocstring`;
         const command = {
           title: '',
@@ -150,6 +136,58 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
       whole.end.line === range.end.line &&
       whole.end.character === whole.end.character
     );
+  }
+
+  private validDocstringStartLine(doc: Document, range: Range): boolean {
+    if (
+      doc
+        .getline(range.start.line)
+        .slice(range.start.character)
+        .trim()
+        .match(/^def\s*/) ||
+      doc
+        .getline(range.start.line)
+        .slice(range.start.character)
+        .trim()
+        .match(/^async def\s*/) ||
+      doc
+        .getline(range.start.line)
+        .slice(range.start.character)
+        .trim()
+        .match(/^class\s*.*/)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private validLineOfFuncOrClassSuffix(lineCharacter: string): boolean {
+    if (lineCharacter.endsWith('):')) {
+      //console.log('---- debug1 ----');
+      return true;
+    }
+
+    if (lineCharacter.match(/\):/)) {
+      //console.log('---- debug2 ----');
+      return true;
+    }
+
+    if (lineCharacter.match(/\]:/)) {
+      //console.log('---- debug3 ----');
+      return true;
+    }
+
+    if (lineCharacter.match(/\s*class\s*.*:$/)) {
+      //console.log('---- debug4 ----');
+      return true;
+    }
+
+    if (lineCharacter.match(/.*\)\s->\s.*:/)) {
+      //console.log('---- debug5 ----');
+      return true;
+    }
+
+    return false;
   }
 }
 
