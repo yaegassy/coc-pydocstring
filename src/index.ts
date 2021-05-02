@@ -3,6 +3,8 @@ import { commands, ExtensionContext, window, workspace, languages, TextEdit, Ran
 import fs from 'fs';
 import path from 'path';
 
+import which from 'which';
+
 import { doFormat, fullDocumentRange } from './doqEngine';
 import PydocstringCodeActionProvider from './action';
 import { doqInstall } from './installer';
@@ -21,13 +23,29 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   let doqPath = extensionConfig.get('doqPath', '');
   if (!doqPath) {
-    if (fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))) {
-      doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
+    if (
+      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe')) ||
+      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))
+    ) {
+      if (process.platform === 'win32') {
+        doqPath = path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe');
+      } else {
+        doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
+      }
     }
   }
 
+  let pythonCommand = extensionConfig.get('builtin.pythonPath', '');
+  if (!pythonCommand) {
+    pythonCommand = detectPythonCommand();
+  }
+
   if (!doqPath) {
-    await installWrapper(context);
+    if (pythonCommand) {
+      await installWrapper(pythonCommand, context);
+    } else {
+      window.showErrorMessage('python3/python command not found');
+    }
   }
 
   context.subscriptions.push(
@@ -106,7 +124,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   context.subscriptions.push(
     commands.registerCommand('pydocstring.install', async () => {
-      await installWrapper(context);
+      if (pythonCommand) {
+        await installWrapper(pythonCommand, context);
+      } else {
+        window.showErrorMessage('python3/python command not found');
+      }
     })
   );
 
@@ -115,18 +137,40 @@ export async function activate(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(languages.registerCodeActionProvider(languageSelector, actionProvider, 'pydocstring'));
 }
 
-async function installWrapper(context: ExtensionContext) {
+async function installWrapper(pythonCommand: string, context: ExtensionContext) {
   const msg = 'Install/Upgrade "doq"?';
 
   let ret = 0;
   ret = await window.showQuickpick(['Yes', 'Cancel'], msg);
   if (ret === 0) {
     try {
-      await doqInstall(context);
+      await doqInstall(pythonCommand, context);
     } catch (e) {
       return;
     }
   } else {
     return;
   }
+}
+
+function detectPythonCommand(): string {
+  let res = '';
+
+  try {
+    which.sync('python3');
+    res = 'python3';
+    return res;
+  } catch (e) {
+    // noop
+  }
+
+  try {
+    which.sync('python');
+    res = 'python';
+    return res;
+  } catch (e) {
+    // noop
+  }
+
+  return res;
 }

@@ -26,6 +26,7 @@ Quickly generate docstrings for python.
 
 - `pydocstring.enable`: Enable coc-pydocstring extension, default: `true`
 - `pydocstring.doqPath`: (OPTIONAL) The path to the doq tool (Absolute path), default: `""`
+- `pydocstring.builtin.pythonPath`: Python 3.x path (Absolute path) to be used for built-in install, default: ""
 - `pydocstring.formatter`: Docstring formatter (--formatter), valid options `["sphinx", "google", "numpy"]`, default: `"sphinx"`
 - `pydocstring.ignoreException`: Ignore exception statements (--ignore_exception), default: `false`
 - `pydocstring.ignoreYield`: Ignore yield statements (--ignore_yield), default: `false`
@@ -45,7 +46,7 @@ Quickly generate docstrings for python.
 - `pydocstring.install`: Install doq
   - It will be installed in this path:
     - Mac/Linux: `~/.config/coc/extensions/coc-pydocstring-data/doq/venv/bin/doq`
-    - Windows: `~/AppData/Local/coc/extensions/coc-pydocstring-data/doq/venv/bin/doq`
+    - Windows: `~/AppData/Local/coc/extensions/coc-pydocstring-data/doq/venv/Scripts/doq.exe`
 
 ## Similar plugins
 
