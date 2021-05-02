@@ -10,18 +10,24 @@ import { DOQ_VERSION } from './constant';
 
 const exec = util.promisify(child_process.exec);
 
-export async function doqInstall(context: ExtensionContext): Promise<void> {
+export async function doqInstall(pythonCommand: string, context: ExtensionContext): Promise<void> {
   const pathVenv = path.join(context.storagePath, 'doq', 'venv');
-  const pathPip = path.join(pathVenv, 'bin', 'pip');
+
+  let pathVenvPython = path.join(context.storagePath, 'doq', 'venv', 'bin', 'python');
+  if (process.platform === 'win32') {
+    pathVenvPython = path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'python');
+  }
 
   const statusItem = window.createStatusBarItem(0, { progress: true });
-  statusItem.text = `Install doq ...`;
+  statusItem.text = `Install doq...`;
   statusItem.show();
 
   rimraf.sync(pathVenv);
   try {
-    window.showMessage(`Install doq ...`);
-    await exec(`python3 -m venv ${pathVenv} && ` + `${pathPip} install -U pip doq==${DOQ_VERSION}`);
+    window.showMessage(`Install doq...`);
+    await exec(
+      `${pythonCommand} -m venv ${pathVenv} && ` + `${pathVenvPython} -m pip install -U pip doq==${DOQ_VERSION}`
+    );
     statusItem.hide();
     window.showMessage(`doq: installed!`);
   } catch (error) {

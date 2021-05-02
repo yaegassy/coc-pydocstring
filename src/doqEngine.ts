@@ -23,8 +23,15 @@ export async function doFormat(
 
   let doqPath = extensionConfig.get('doqPath', '');
   if (!doqPath) {
-    if (fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))) {
-      doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
+    if (
+      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe')) ||
+      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))
+    ) {
+      if (process.platform === 'win32') {
+        doqPath = path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe');
+      } else {
+        doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
+      }
     } else {
       throw 'Unable to find the doq.';
     }
