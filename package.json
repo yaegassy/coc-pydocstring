@@ -83,6 +83,11 @@
           ],
           "description": "Docstring formatter. sphinx, google or numpy"
         },
+        "pydocstring.templatePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to template directory"
+        },
         "pydocstring.ignoreException": {
           "type": "boolean",
           "default": false,

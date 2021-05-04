@@ -18,6 +18,7 @@ export async function doFormat(
   const extensionConfig = workspace.getConfiguration('pydocstring');
 
   const formatterOption = extensionConfig.get('formatter', 'sphinx');
+  const templatePath = extensionConfig.get('templatePath', '');
   const isIgnoreException = extensionConfig.get('ignoreException', false);
   const isIgnoreYield = extensionConfig.get('ignoreYield', false);
 
@@ -46,6 +47,16 @@ export async function doFormat(
   args.push('-w');
 
   args.push('--formatter', formatterOption);
+
+  if (
+    templatePath &&
+    fs.existsSync(templatePath) &&
+    fs.existsSync(path.join(templatePath, 'class.txt')) &&
+    fs.existsSync(path.join(templatePath, 'def.txt')) &&
+    fs.existsSync(path.join(templatePath, 'noarg.txt'))
+  ) {
+    args.push('--template_path', templatePath);
+  }
 
   if (isIgnoreException) {
     args.push('--ignore_exception');
