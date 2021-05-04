@@ -26,9 +26,9 @@ Quickly generate docstrings for python.
 
 - `pydocstring.enable`: Enable coc-pydocstring extension, default: `true`
 - `pydocstring.doqPath`: The path to the doq tool (Absolute path), default: `""`
-- `pydocstring.builtin.pythonPath`: Python 3.x path (Absolute path) to be used for built-in install, default: ""
+- `pydocstring.builtin.pythonPath`: Python 3.x path (Absolute path) to be used for built-in install, default: `""`
 - `pydocstring.formatter`: Docstring formatter (--formatter), valid options `["sphinx", "google", "numpy"]`, default: `"sphinx"`
-- `pydocstring.templatePath`: Path to template directory (--template_path), default: ""
+- `pydocstring.templatePath`: Path to template directory (--template_path), default: `""`
 - `pydocstring.ignoreException`: Ignore exception statements (--ignore_exception), default: `false`
 - `pydocstring.ignoreYield`: Ignore yield statements (--ignore_yield), default: `false`
 - `pydocstring.enableFileAction`: Enable file-level code action, default: `false`
