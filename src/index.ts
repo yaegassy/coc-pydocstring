@@ -35,14 +35,15 @@ export async function activate(context: ExtensionContext): Promise<void> {
     }
   }
 
-  let pythonCommand = extensionConfig.get('builtin.pythonPath', '');
-  if (!pythonCommand) {
-    pythonCommand = detectPythonCommand();
+  let builtinInstallPythonCommand = extensionConfig.get('builtin.pythonPath', '');
+  if (!builtinInstallPythonCommand) {
+    const isRealpath = true;
+    builtinInstallPythonCommand = getPythonCommand(isRealpath);
   }
 
   if (!doqPath) {
-    if (pythonCommand) {
-      await installWrapper(pythonCommand, context);
+    if (builtinInstallPythonCommand) {
+      await installWrapper(builtinInstallPythonCommand, context);
     } else {
       window.showErrorMessage('python3/python command not found');
     }
@@ -124,8 +125,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   context.subscriptions.push(
     commands.registerCommand('pydocstring.install', async () => {
-      if (pythonCommand) {
-        await installWrapper(pythonCommand, context);
+      if (builtinInstallPythonCommand) {
+        await installWrapper(builtinInstallPythonCommand, context);
       } else {
         window.showErrorMessage('python3/python command not found');
       }
@@ -153,20 +154,24 @@ async function installWrapper(pythonCommand: string, context: ExtensionContext) 
   }
 }
 
-function detectPythonCommand(): string {
+function getPythonCommand(isRealpath?: boolean): string {
   let res = '';
 
   try {
-    which.sync('python3');
-    res = 'python3';
+    res = which.sync('python3');
+    if (isRealpath) {
+      res = fs.realpathSync(res);
+    }
     return res;
   } catch (e) {
     // noop
   }
 
   try {
-    which.sync('python');
-    res = 'python';
+    res = which.sync('python');
+    if (isRealpath) {
+      res = fs.realpathSync(res);
+    }
     return res;
   } catch (e) {
     // noop
