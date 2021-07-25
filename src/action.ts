@@ -1,6 +1,21 @@
-import { TextDocument, CodeAction, CodeActionContext, CodeActionProvider, Range, workspace, Document } from 'coc.nvim';
+import {
+  CodeAction,
+  CodeActionContext,
+  CodeActionProvider,
+  Document,
+  OutputChannel,
+  Range,
+  TextDocument,
+  workspace,
+} from 'coc.nvim';
 
 export class PydocstringCodeActionProvider implements CodeActionProvider {
+  private outputChannel: OutputChannel;
+
+  constructor(outputChannel: OutputChannel) {
+    this.outputChannel = outputChannel;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async provideCodeActions(document: TextDocument, range: Range, context: CodeActionContext) {
     const extensionConfig = workspace.getConfiguration('pydocstring');
