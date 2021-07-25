@@ -74,6 +74,8 @@ export async function doFormat(
     args.push('--end', (range.end.line + 1).toString());
   }
 
+  args.push('-f');
+
   const tmpFile = tmp.fileSync();
   fs.writeFileSync(tmpFile.name, text);
 
@@ -85,7 +87,7 @@ export async function doFormat(
   outputChannel.appendLine(`tmpFile: ${tmpFile.name}\n`);
 
   return new Promise(function (resolve) {
-    cp.execFile(doqPath, [...args, '-f', tmpFile.name], opts, function (err) {
+    cp.execFile(doqPath, [...args, tmpFile.name], opts, function (err) {
       if (err) {
         tmpFile.removeCallback();
 

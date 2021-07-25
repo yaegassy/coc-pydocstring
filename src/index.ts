@@ -134,7 +134,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   );
 
   const languageSelector = [{ language: 'python', scheme: 'file' }];
-  const actionProvider = new PydocstringCodeActionProvider();
+  const actionProvider = new PydocstringCodeActionProvider(outputChannel);
   context.subscriptions.push(languages.registerCodeActionProvider(languageSelector, actionProvider, 'pydocstring'));
 }
 
