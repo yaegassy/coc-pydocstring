@@ -78,36 +78,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
           }
         }
 
-        // ---- TODO: refacotr ----
-
-        let endLine = range.end.line;
-        let endCharacter = doc.getline(range.end.character).length;
-
-        const startLineFullLength = doc.getline(range.start.line).length;
-        const startLineTrimLength = doc.getline(range.start.line).trim().length;
-        const startLineIndentLength = startLineFullLength - startLineTrimLength;
-
-        const endLineFullLength = doc.getline(endLine).length;
-        const endLineTrimLength = doc.getline(endLine).trim().length;
-        const endLineIndentLength = endLineFullLength - endLineTrimLength;
-        endCharacter = range.end.character + endLineIndentLength;
-
-        if (
-          doc.getline(range.start.line).match(/\s*class\s*.*/) ||
-          doc.getline(range.start.line).match(/\s*def\s*.*/)
-        ) {
-          endCharacter = 0;
-          endLine = range.end.line + 1;
-        }
-
-        // Resove range
-        range = Range.create(
-          { line: range.start.line, character: range.start.character - startLineIndentLength },
-          { line: endLine, character: endCharacter }
-        );
-
-        // ---- /TODO: refacotr ----
-
         // If there are no changes to the text, early return
         if (document.getText() === code) {
           return;
