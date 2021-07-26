@@ -25,102 +25,71 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
 
     const codeActions: CodeAction[] = [];
 
-    /** Line */
-    if (range.start.line === range.end.line && range.start.character === 0) {
+    /** Line & Selected */
+    if (this.lineRange(range) || this.selectedRange(doc, range)) {
       // To match the style of the range type (zero base)
       const fullRangeLength = doc.getLines().length - 1;
 
-      let endBlockRangeLine = range.end.line;
-      let funcOrClassSuffixLine = range.end.line;
+      // Initial value
+      let resolveEndRangeLine = 0;
+      let resolveEndRangeChara = 0;
+      let funcOrClassSuffixLine = 0;
+      let isSameLineMatched = false;
 
-      for (let i = range.start.line; i <= fullRangeLength; i++) {
-        if (this.validLineOfFuncOrClassSuffix(doc.getline(i))) {
-          funcOrClassSuffixLine = i;
-          break;
-        }
+      if (!this.validDocstringStartLine(doc, range)) {
+        return;
       }
 
-      // "doq" cannot process the "--end" option if the line is empty or a #,
-      // it further loops to check for lines with other strings.
-      for (let i = funcOrClassSuffixLine; i <= fullRangeLength; i++) {
-        if (i !== funcOrClassSuffixLine && doc.getline(i).trim() !== '' && !doc.getline(i).trim().startsWith('#')) {
-          endBlockRangeLine = i;
-          break;
-        }
-      }
-
-      const resolveRange = Range.create(
-        { character: range.start.character, line: range.start.line },
-        { character: range.end.character, line: endBlockRangeLine }
-      );
-
-      if (this.validDocstringStartLine(doc, range)) {
-        const title = `Add docstirng for "Line" by pydocstring`;
-        const command = {
-          title: '',
-          command: 'pydocstring.runAction',
-          arguments: [document, resolveRange],
-        };
-
-        const action: CodeAction = {
-          title,
-          command,
-        };
-
-        codeActions.push(action);
-      }
-    }
-
-    /** Range */
-    if (range.start.line < range.end.line && !this.wholeRange(doc, range)) {
-      // To match the style of the range type (zero base)
-      const fullRangeLength = doc.getLines().length - 1;
-
-      let endBlockRangeLine = range.end.line;
-
-      let hasFuncOrClassSuffix = false;
+      // Checking the end string line of a function definition
       for (let i = range.start.line; i <= range.end.line; i++) {
         if (this.validLineOfFuncOrClassSuffix(doc.getline(i))) {
-          hasFuncOrClassSuffix = true;
-          endBlockRangeLine = endBlockRangeLine + 1;
+          funcOrClassSuffixLine = i;
+          isSameLineMatched = true;
         }
       }
 
-      // "doq" cannot process the "--end" option if the line is empty or a #,
-      // it further loops to check for lines with other strings.
-      for (let i = endBlockRangeLine; i <= fullRangeLength; i++) {
+      // MEMO: If the function definition line does not have a function exit string
+      if (!isSameLineMatched) {
+        for (let i = range.start.line; i <= fullRangeLength; i++) {
+          if (this.validLineOfFuncOrClassSuffix(doc.getline(i))) {
+            funcOrClassSuffixLine = i;
+            break;
+          }
+        }
+      }
+
+      for (let i = funcOrClassSuffixLine; i <= fullRangeLength; i++) {
         if (
-          doc.getline(i + 1).trim() !== '' &&
-          !doc
-            .getline(i + 1)
-            .trim()
-            .startsWith('#')
+          i !== funcOrClassSuffixLine &&
+          doc.getline(i).trim() !== '' &&
+          !doc.getline(i).trim().startsWith('#') &&
+          !doc.getline(i).trim().startsWith('"')
         ) {
-          endBlockRangeLine = i + 1;
+          resolveEndRangeLine = i;
           break;
         }
       }
+      resolveEndRangeChara = doc.getline(resolveEndRangeLine).length;
 
       const resolveRange = Range.create(
-        { character: range.start.character, line: range.start.line },
-        { character: range.end.character, line: endBlockRangeLine }
+        // MEMO: range.start.character is fixed at 0
+        { line: range.start.line, character: 0 },
+        { line: resolveEndRangeLine, character: resolveEndRangeChara }
       );
 
-      if (this.validDocstringStartLine(doc, range) && hasFuncOrClassSuffix) {
-        const title = `Add docstirng for "Range" by pydocstring`;
-        const command = {
-          title: '',
-          command: 'pydocstring.runAction',
-          arguments: [document, resolveRange],
-        };
+      const title = `Add docstirng for "Line or Selected" by pydocstring`;
+      const command = {
+        title: '',
+        command: 'pydocstring.runAction',
+        arguments: [document, resolveRange],
+      };
 
-        const action: CodeAction = {
-          title,
-          command,
-        };
+      const action: CodeAction = {
+        title,
+        command,
+      };
 
-        codeActions.push(action);
-      }
+      codeActions.push(action);
     }
 
     /** Whole (File) */
@@ -141,16 +110,6 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
     }
 
     return codeActions;
-  }
-
-  private wholeRange(doc: Document, range: Range): boolean {
-    const whole = Range.create(0, 0, doc.lineCount, 0);
-    return (
-      whole.start.line === range.start.line &&
-      whole.start.character === range.start.character &&
-      whole.end.line === range.end.line &&
-      whole.end.character === whole.end.character
-    );
   }
 
   private validDocstringStartLine(doc: Document, range: Range): boolean {
@@ -178,31 +137,50 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
 
   private validLineOfFuncOrClassSuffix(lineCharacter: string): boolean {
     if (lineCharacter.endsWith('):')) {
-      //console.log('---- debug1 ----');
       return true;
     }
 
     if (lineCharacter.match(/\):/)) {
-      //console.log('---- debug2 ----');
       return true;
     }
 
     if (lineCharacter.match(/\]:/)) {
-      //console.log('---- debug3 ----');
       return true;
     }
 
     if (lineCharacter.match(/\s*class\s*.*:$/)) {
-      //console.log('---- debug4 ----');
       return true;
     }
 
     if (lineCharacter.match(/.*\)\s->\s.*:/)) {
-      //console.log('---- debug5 ----');
       return true;
     }
 
     return false;
+  }
+
+  private wholeRange(doc: Document, range: Range): boolean {
+    const whole = Range.create(0, 0, doc.lineCount, 0);
+    return (
+      whole.start.line === range.start.line &&
+      whole.start.character === range.start.character &&
+      whole.end.line === range.end.line &&
+      whole.end.character === whole.end.character
+    );
+  }
+
+  private selectedRange(doc: Document, range: Range): boolean {
+    return range.start.line < range.end.line && !this.wholeRange(doc, range);
+  }
+
+  private lineRange(range: Range): boolean {
+    return (
+      /** After */
+      // https://github.com/neoclide/coc.nvim/commit/cad8c6b1f0b280404ff627d08e62fcc17dabed35
+      (range.start.line + 1 === range.end.line && range.start.character === 0 && range.end.character === 0) ||
+      /** Older */
+      (range.start.line === range.end.line && range.start.character === 0)
+    );
   }
 }
 
