@@ -18,9 +18,13 @@
 Plug 'yaegassy/coc-pydocstring', {'do': 'yarn install --frozen-lockfile'}
 ```
 
-## Note
+## Feature
 
 Quickly generate docstrings for python.
+
+- Code Action
+- Command
+- Built-in installer
 
 ## Configuration options
 
@@ -35,11 +39,22 @@ Quickly generate docstrings for python.
 
 ## Code Actions
 
-- `Add docstirng for "Line" by pydocstring`
-- `Add docstirng for "Range" by pydocstring`
-  - In the case of range action, please select up to the line containing the end string of the function definition. e.g. `):`, `) -> Dummy:`, `]:`
+**Example key mapping (Code Action related)**:
+
+```vim
+nmap <silent> ga <Plug>(coc-codeaction-line)
+xmap <silent> ga <Plug>(coc-codeaction-selected)
+nmap <silent> gA <Plug>(coc-codeaction)
+```
+
+**Usage**:
+
+In a "line" or "selection" containing `def`, `async def`, or `class`, enter the mapped key (e.g. `ga`) and display a list of code actions that can be performed.
+
+- `Add docstirng for "Line or Selected" by pydocstring`
 - `Add docstirng for "File" by pydocstring`
-  - File-level code actions are disabled (false) by default.
+  - File-level code actions are disabled (`false`) by default.
+  - If you want to use it, set `pydocstring.enableFileAction` to `true` in "coc-settings.json".
 
 ## Commands
 
