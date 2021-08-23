@@ -21,6 +21,7 @@ export async function doFormat(
   const templatePath = extensionConfig.get('templatePath', '');
   const isIgnoreException = extensionConfig.get('ignoreException', false);
   const isIgnoreYield = extensionConfig.get('ignoreYield', false);
+  const isIgnoreInit = extensionConfig.get('ignoreInit', false);
 
   let doqPath = extensionConfig.get('doqPath', '');
   if (!doqPath) {
@@ -64,6 +65,12 @@ export async function doFormat(
 
   if (isIgnoreYield) {
     args.push('--ignore_yield');
+  }
+
+  if (range === undefined) {
+    if (isIgnoreInit) {
+      args.push('--ignore_init');
+    }
   }
 
   if (range?.start) {

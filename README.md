@@ -35,6 +35,7 @@ Quickly generate docstrings for python.
 - `pydocstring.templatePath`: Path to template directory (--template_path), default: `""`
 - `pydocstring.ignoreException`: Ignore exception statements (--ignore_exception), default: `false`
 - `pydocstring.ignoreYield`: Ignore yield statements (--ignore_yield), default: `false`
+- `pydocstring.ignoreInit`: Ignore genereate docstring to __init__ method (--ignore_init). This option only available at `:CocCommand pydocstring.runFile`, default: `false`
 - `pydocstring.enableFileAction`: Enable file-level code action, default: `false`
 
 ## Code Actions
