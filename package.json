@@ -1,6 +1,6 @@
 {
   "name": "coc-pydocstring",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "doqVersion": "0.8.0",
   "description": "doq (python docstring generator) extension for coc.nvim",
   "author": "yaegassy <yosstools@gmail.com>",
@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@types/node": "^14.14.22",
-    "@types/tmp": "^0.2.0",
     "@types/rimraf": "^3.0.0",
+    "@types/tmp": "^0.2.0",
     "@types/which": "2.0.0",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
@@ -46,8 +46,8 @@
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.2.0",
     "rimraf": "^3.0.2",
-    "typescript": "^4.1.2",
     "tmp": "^0.1.0",
+    "typescript": "^4.1.2",
     "which": "^2.0.2"
   },
   "activationEvents": [
