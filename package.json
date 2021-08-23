@@ -111,7 +111,7 @@
         "title": "Install doq"
       },
       {
-        "command": "pydocstring.run",
+        "command": "pydocstring.runFile",
         "title": "Run doq for file"
       }
     ]
