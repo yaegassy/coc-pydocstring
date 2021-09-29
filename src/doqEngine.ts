@@ -110,6 +110,7 @@ export async function doFormat(
       const text = fs.readFileSync(tmpFile.name, 'utf-8');
       tmpFile.removeCallback();
 
+      outputChannel.appendLine(`==== result ====:\n\n${text}`);
       resolve(text);
     });
   });

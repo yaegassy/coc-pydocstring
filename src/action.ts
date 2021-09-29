@@ -69,7 +69,10 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
           break;
         }
       }
-      resolveEndRangeChara = doc.getline(resolveEndRangeLine).length;
+
+      const fullEndChara = doc.getline(resolveEndRangeLine).length;
+      const trimEndChara = doc.getline(resolveEndRangeLine).trim().length;
+      resolveEndRangeChara = fullEndChara + trimEndChara;
 
       const resolveRange = Range.create(
         // MEMO: range.start.character is fixed at 0
