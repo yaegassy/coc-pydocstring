@@ -73,6 +73,11 @@
           "default": "",
           "description": "Python 3.x path (Absolute path) to be used for built-in install"
         },
+        "pydocstring.enableInstallPrompt": {
+          "type": "boolean",
+          "default": true,
+          "description": "Prompt the user before install"
+        },
         "pydocstring.formatter": {
           "type": "string",
           "default": "sphinx",

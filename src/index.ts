@@ -41,9 +41,21 @@ export async function activate(context: ExtensionContext): Promise<void> {
     builtinInstallPythonCommand = getPythonCommand(isRealpath);
   }
 
+  const enableInstallPrompt = extensionConfig.get<boolean>('enableInstallPrompt', true);
+
+  context.subscriptions.push(
+    commands.registerCommand('pydocstring.install', async () => {
+      if (builtinInstallPythonCommand) {
+        await installWrapper(builtinInstallPythonCommand, context, enableInstallPrompt);
+      } else {
+        window.showErrorMessage('python3/python command not found');
+      }
+    })
+  );
+
   if (!doqPath) {
     if (builtinInstallPythonCommand) {
-      await installWrapper(builtinInstallPythonCommand, context);
+      await installWrapper(builtinInstallPythonCommand, context, enableInstallPrompt);
     } else {
       window.showErrorMessage('python3/python command not found');
     }
@@ -93,34 +105,27 @@ export async function activate(context: ExtensionContext): Promise<void> {
     )
   );
 
-  context.subscriptions.push(
-    commands.registerCommand('pydocstring.install', async () => {
-      if (builtinInstallPythonCommand) {
-        await installWrapper(builtinInstallPythonCommand, context);
-      } else {
-        window.showErrorMessage('python3/python command not found');
-      }
-    })
-  );
-
   const languageSelector = [{ language: 'python', scheme: 'file' }];
   const actionProvider = new PydocstringCodeActionProvider(outputChannel);
   context.subscriptions.push(languages.registerCodeActionProvider(languageSelector, actionProvider, 'pydocstring'));
 }
 
-async function installWrapper(pythonCommand: string, context: ExtensionContext) {
-  const msg = 'Install/Upgrade "doq"?';
-
-  let ret = 0;
-  ret = await window.showQuickpick(['Yes', 'Cancel'], msg);
-  if (ret === 0) {
-    try {
-      await doqInstall(pythonCommand, context);
-    } catch (e) {
+async function installWrapper(pythonCommand: string, context: ExtensionContext, isPrompt: boolean) {
+  if (isPrompt) {
+    const msg = 'Install/Upgrade "doq"?';
+    let ret = 0;
+    ret = await window.showQuickpick(['Yes', 'Cancel'], msg);
+    if (ret === 0) {
+      try {
+        await doqInstall(pythonCommand, context);
+      } catch (e) {
+        return;
+      }
+    } else {
       return;
     }
   } else {
-    return;
+    await doqInstall(pythonCommand, context);
   }
 }
 
