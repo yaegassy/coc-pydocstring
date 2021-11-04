@@ -54,6 +54,15 @@
     "onLanguage:python"
   ],
   "contributes": {
+    "rootPatterns": [
+      {
+        "filetype": "python",
+        "patterns": [
+          "setup.cfg",
+          "pyproject.toml"
+        ]
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "coc-pydocstring configuration",
