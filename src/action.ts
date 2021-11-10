@@ -80,7 +80,7 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
         { line: resolveEndRangeLine, character: resolveEndRangeChara }
       );
 
-      const title = `Add docstirng for "Line or Selected" by pydocstring`;
+      const title = `Add docstring for "Line or Selected" by pydocstring`;
       const command = {
         title: '',
         command: 'pydocstring.runAction',
@@ -97,7 +97,7 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
 
     /** Whole (File) */
     if (this.wholeRange(doc, range) && isEnableFileAction) {
-      const title = `Add docstirng for "File" by pydocstring`;
+      const title = `Add docstring for "File" by pydocstring`;
       const command = {
         title: '',
         command: 'pydocstring.runAction',

@@ -53,8 +53,8 @@ nmap <silent> gA <Plug>(coc-codeaction)
 
 In a "line" or "selection" containing `def`, `async def`, or `class`, enter the mapped key (e.g. `ga`) and display a list of code actions that can be performed.
 
-- `Add docstirng for "Line or Selected" by pydocstring`
-- `Add docstirng for "File" by pydocstring`
+- `Add docstring for "Line or Selected" by pydocstring`
+- `Add docstring for "File" by pydocstring`
   - File-level code actions are disabled (`false`) by default.
   - If you want to use it, set `pydocstring.enableFileAction` to `true` in "coc-settings.json".
 
