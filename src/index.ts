@@ -113,9 +113,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 async function installWrapper(pythonCommand: string, context: ExtensionContext, isPrompt: boolean) {
   if (isPrompt) {
     const msg = 'Install/Upgrade "doq"?';
-    let ret = 0;
-    ret = await window.showQuickpick(['Yes', 'Cancel'], msg);
-    if (ret === 0) {
+    const ret = await window.showPrompt(msg);
+    if (ret) {
       try {
         await doqInstall(pythonCommand, context);
       } catch (e) {
