@@ -24,12 +24,12 @@ export async function doqInstall(pythonCommand: string, context: ExtensionContex
 
   rimraf.sync(pathVenv);
   try {
-    window.showMessage(`Install doq...`);
+    window.showInformationMessage(`Install doq...`);
     await exec(
       `${pythonCommand} -m venv ${pathVenv} && ` + `${pathVenvPython} -m pip install -U pip doq==${DOQ_VERSION}`
     );
     statusItem.hide();
-    window.showMessage(`doq: installed!`);
+    window.showInformationMessage(`doq: installed!`);
   } catch (error) {
     statusItem.hide();
     window.showErrorMessage(`doq: install failed. | ${error}`);
