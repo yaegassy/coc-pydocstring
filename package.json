@@ -132,6 +132,10 @@
       {
         "command": "pydocstring.runFile",
         "title": "Run doq for file"
+      },
+      {
+        "command": "pydocstring.showOutput",
+        "title": "Show pydocstring output channel"
       }
     ]
   }

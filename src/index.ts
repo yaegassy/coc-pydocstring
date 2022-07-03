@@ -2,9 +2,9 @@ import { commands, ExtensionContext, window, workspace, languages, TextEdit, Ran
 
 import fs from 'fs';
 import path from 'path';
-
 import which from 'which';
 
+import * as showOutputCommandFeature from './commands/showOutput';
 import { doFormat, fullDocumentRange } from './doqEngine';
 import PydocstringCodeActionProvider from './action';
 import { doqInstall } from './installer';
@@ -15,6 +15,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   if (!isEnable) return;
 
   const outputChannel = window.createOutputChannel('pydocstring');
+  showOutputCommandFeature.activate(context, outputChannel);
 
   const extensionStoragePath = context.storagePath;
   if (!fs.existsSync(extensionStoragePath)) {

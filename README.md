@@ -65,6 +65,7 @@ In a "line" or "selection" containing `def`, `async def`, or `class`, enter the 
   - It will be installed in this path:
     - Mac/Linux: `~/.config/coc/extensions/coc-pydocstring-data/doq/venv/bin/doq`
     - Windows: `~/AppData/Local/coc/extensions/coc-pydocstring-data/doq/venv/Scripts/doq.exe`
+- `pydocstring.showOutput`: Show pydocstring output channel
 
 ## Similar plugins
 
