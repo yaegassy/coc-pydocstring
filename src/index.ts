@@ -10,9 +10,7 @@ import * as showOutputCommandFeature from './commands/showOutput';
 import { getDoqPath, getPythonCommand } from './common';
 
 export async function activate(context: ExtensionContext): Promise<void> {
-  const extensionConfig = workspace.getConfiguration('pydocstring');
-  const isEnable = extensionConfig.get<boolean>('enable', true);
-  if (!isEnable) return;
+  if (!workspace.getConfiguration('pydocstring').get<boolean>('enable', true)) return;
 
   const outputChannel = window.createOutputChannel('pydocstring');
   showOutputCommandFeature.activate(context, outputChannel);
@@ -24,7 +22,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const doqPath = getDoqPath(context);
 
-  let builtinInstallPythonCommand = extensionConfig.get('builtin.pythonPath', '');
+  let builtinInstallPythonCommand = workspace.getConfiguration('pydocstring').get<string>('builtin.pythonPath', '');
   if (!builtinInstallPythonCommand) {
     const isRealpath = true;
     builtinInstallPythonCommand = getPythonCommand(isRealpath);
