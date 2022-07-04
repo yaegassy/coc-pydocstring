@@ -1,12 +1,13 @@
-import { commands, ExtensionContext, Range, TextDocument, TextEdit, window, workspace } from 'coc.nvim';
+import { commands, ExtensionContext, window, workspace } from 'coc.nvim';
 
 import fs from 'fs';
 
-import * as docCodeActionFeature from './action';
-import * as showOutputCommandFeature from './commands/showOutput';
+import * as doqCodeActionFeature from './action';
 import * as installCommandFeature from './commands/install';
-import { doFormat } from './doqEngine';
-import { getDoqPath, getPythonCommand, fullDocumentRange } from './common';
+import * as runActionInternalCommandFeature from './commands/runAction';
+import * as runFileCommandFeature from './commands/runFile';
+import * as showOutputCommandFeature from './commands/showOutput';
+import { getDoqPath, getPythonCommand } from './common';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const extensionConfig = workspace.getConfiguration('pydocstring');
@@ -39,49 +40,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
     }
   }
 
-  context.subscriptions.push(
-    commands.registerCommand('pydocstring.runFile', async () => {
-      const doc = await workspace.document;
+  runFileCommandFeature.activate(context, outputChannel);
+  // internal command
+  runActionInternalCommandFeature.activate(context, outputChannel);
 
-      const code = await doFormat(context, outputChannel, doc.textDocument, undefined);
-      const edits = [TextEdit.replace(fullDocumentRange(doc.textDocument), code)];
-      if (edits) {
-        await doc.applyEdits(edits);
-      }
-    })
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
-      'pydocstring.runAction',
-      async (document: TextDocument, range?: Range) => {
-        const doc = workspace.getDocument(document.uri);
-
-        let edits: TextEdit[];
-
-        const code = await doFormat(context, outputChannel, document, range);
-        if (!range) {
-          range = fullDocumentRange(document);
-          edits = [TextEdit.replace(range, code)];
-          if (edits) {
-            return await doc.applyEdits(edits);
-          }
-        }
-
-        // If there are no changes to the text, early return
-        if (document.getText() === code) {
-          return;
-        }
-
-        edits = [TextEdit.replace(range, code)];
-        if (edits) {
-          return await doc.applyEdits(edits);
-        }
-      },
-      null,
-      true
-    )
-  );
-
-  docCodeActionFeature.activate(context, outputChannel);
+  doqCodeActionFeature.activate(context, outputChannel);
 }
