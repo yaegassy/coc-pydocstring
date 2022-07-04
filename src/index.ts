@@ -1,12 +1,12 @@
-import { commands, ExtensionContext, window, workspace, languages, TextEdit, Range, TextDocument } from 'coc.nvim';
+import { commands, ExtensionContext, Range, TextDocument, TextEdit, window, workspace } from 'coc.nvim';
 
 import fs from 'fs';
 import path from 'path';
 import which from 'which';
 
+import * as docCodeActionFeature from './action';
 import * as showOutputCommandFeature from './commands/showOutput';
 import { doFormat, fullDocumentRange } from './doqEngine';
-import PydocstringCodeActionProvider from './action';
 import { doqInstall } from './installer';
 
 export async function activate(context: ExtensionContext): Promise<void> {
@@ -106,9 +106,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     )
   );
 
-  const languageSelector = [{ language: 'python', scheme: 'file' }];
-  const actionProvider = new PydocstringCodeActionProvider(outputChannel);
-  context.subscriptions.push(languages.registerCodeActionProvider(languageSelector, actionProvider, 'pydocstring'));
+  docCodeActionFeature.activate(context, outputChannel);
 }
 
 async function installWrapper(pythonCommand: string, context: ExtensionContext, isPrompt: boolean) {

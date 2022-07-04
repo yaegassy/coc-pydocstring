@@ -1,15 +1,26 @@
 import {
+  ExtensionContext,
+  DocumentSelector,
   CodeAction,
   CodeActionContext,
   CodeActionProvider,
   Document,
   OutputChannel,
   Range,
+  languages,
   TextDocument,
   workspace,
 } from 'coc.nvim';
 
-export class PydocstringCodeActionProvider implements CodeActionProvider {
+export function activate(context: ExtensionContext, outputChannel: OutputChannel) {
+  const documentSelector: DocumentSelector = [{ language: 'python', scheme: 'file' }];
+
+  context.subscriptions.push(
+    languages.registerCodeActionProvider(documentSelector, new DoqCodeActionProvider(outputChannel), 'pydocstring')
+  );
+}
+
+export class DoqCodeActionProvider implements CodeActionProvider {
   private outputChannel: OutputChannel;
 
   constructor(outputChannel: OutputChannel) {
@@ -186,5 +197,3 @@ export class PydocstringCodeActionProvider implements CodeActionProvider {
     );
   }
 }
-
-export default PydocstringCodeActionProvider;
