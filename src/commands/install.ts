@@ -22,6 +22,7 @@ export async function installWrapper(context: ExtensionContext, pythonCommand: s
     if (ret) {
       try {
         await doqInstall(pythonCommand, context);
+        commands.executeCommand('editor.action.restart');
       } catch (e) {
         return;
       }
@@ -30,5 +31,6 @@ export async function installWrapper(context: ExtensionContext, pythonCommand: s
     }
   } else {
     await doqInstall(pythonCommand, context);
+    commands.executeCommand('editor.action.restart');
   }
 }
