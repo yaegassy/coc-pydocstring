@@ -5,6 +5,8 @@ import fs from 'fs';
 import path from 'path';
 import tmp from 'tmp';
 
+import { getDoqPath } from './common';
+
 export async function doFormat(
   context: ExtensionContext,
   outputChannel: OutputChannel,
@@ -23,20 +25,9 @@ export async function doFormat(
   const isIgnoreYield = extensionConfig.get('ignoreYield', false);
   const isIgnoreInit = extensionConfig.get('ignoreInit', false);
 
-  let doqPath = extensionConfig.get('doqPath', '');
+  const doqPath = getDoqPath(context);
   if (!doqPath) {
-    if (
-      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe')) ||
-      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))
-    ) {
-      if (process.platform === 'win32') {
-        doqPath = path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe');
-      } else {
-        doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
-      }
-    } else {
-      throw 'Unable to find the doq.';
-    }
+    throw 'Unable to find the doq';
   }
 
   const fileName = Uri.parse(document.uri).fsPath;

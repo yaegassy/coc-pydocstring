@@ -26,6 +26,24 @@ Quickly generate docstrings for python.
 - Command
 - Built-in installer
 
+## Detect: "doq" command
+
+1. `pydocstring.doqPath` setting
+1. PATH environment (e.g. system global PATH or venv, etc ...)
+1. builtin: extension-only "venv" (Installation commands are also provided)
+
+## Built-in install
+
+coc-pydocstring allows you to create an extension-only "venv" and install "doq".
+
+The first time you use coc-pydocstring, if "doq" command is not detected, you will be prompted to do a built-in installation.
+
+You can also run the installation command manually.
+
+```vim
+:CocCommand pydocstring.install
+```
+
 ## Configuration options
 
 - `pydocstring.enable`: Enable coc-pydocstring extension, default: `true`

@@ -11,16 +11,27 @@ export function fullDocumentRange(document: TextDocument): Range {
 }
 
 export function getDoqPath(context: ExtensionContext) {
+  // Priority to detect doq
+  //
+  // 1. pydocstring.doqPath setting
+  // 2. PATH environment (e.g. system global PATH or venv, etc ...)
+  // 3. extension venv (buit-in)
+
   let doqPath = workspace.getConfiguration('pydocstring').get('doqPath', '');
 
-  if (
-    fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe')) ||
-    fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))
-  ) {
-    if (process.platform === 'win32') {
-      doqPath = path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe');
-    } else {
-      doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
+  if (!doqPath) {
+    const whichDoq = whichCmd('doq');
+    if (whichDoq) {
+      doqPath = whichDoq;
+    } else if (
+      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe')) ||
+      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))
+    ) {
+      if (process.platform === 'win32') {
+        doqPath = path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe');
+      } else {
+        doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
+      }
     }
   }
 
@@ -51,4 +62,12 @@ export function getPythonCommand(isRealpath?: boolean): string {
   }
 
   return res;
+}
+
+export function whichCmd(cmd: string): string {
+  try {
+    return which.sync(cmd);
+  } catch (error) {
+    return '';
+  }
 }
