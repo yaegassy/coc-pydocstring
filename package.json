@@ -1,6 +1,6 @@
 {
   "name": "coc-pydocstring",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "doqVersion": "0.9.1",
   "description": "doq (python docstring generator) extension for coc.nvim",
   "author": "yaegassy <yosstools@gmail.com>",
