@@ -1,13 +1,13 @@
 import {
-  ExtensionContext,
-  DocumentSelector,
   CodeAction,
   CodeActionContext,
   CodeActionProvider,
   Document,
+  DocumentSelector,
+  ExtensionContext,
+  languages,
   OutputChannel,
   Range,
-  languages,
   TextDocument,
   workspace,
 } from 'coc.nvim';

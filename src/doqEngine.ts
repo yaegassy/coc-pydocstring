@@ -1,4 +1,4 @@
-import { Range, TextDocument, Uri, window, workspace, ExtensionContext, OutputChannel } from 'coc.nvim';
+import { ExtensionContext, OutputChannel, Range, TextDocument, Uri, window, workspace } from 'coc.nvim';
 
 import cp from 'child_process';
 import fs from 'fs';

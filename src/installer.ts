@@ -1,9 +1,8 @@
 import { ExtensionContext, window } from 'coc.nvim';
 
-import path from 'path';
-
-import rimraf from 'rimraf';
 import child_process from 'child_process';
+import path from 'path';
+import rimraf from 'rimraf';
 import util from 'util';
 
 import { DOQ_VERSION } from './constant';
