@@ -1,13 +1,12 @@
 import { commands, ExtensionContext, Range, TextDocument, TextEdit, window, workspace } from 'coc.nvim';
 
 import fs from 'fs';
-import path from 'path';
-import which from 'which';
 
 import * as docCodeActionFeature from './action';
 import * as showOutputCommandFeature from './commands/showOutput';
-import { doFormat, fullDocumentRange } from './doqEngine';
-import { doqInstall } from './installer';
+import * as installCommandFeature from './commands/install';
+import { doFormat } from './doqEngine';
+import { getDoqPath, getPythonCommand, fullDocumentRange } from './common';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const extensionConfig = workspace.getConfiguration('pydocstring');
@@ -22,19 +21,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     fs.mkdirSync(extensionStoragePath);
   }
 
-  let doqPath = extensionConfig.get('doqPath', '');
-  if (!doqPath) {
-    if (
-      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe')) ||
-      fs.existsSync(path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq'))
-    ) {
-      if (process.platform === 'win32') {
-        doqPath = path.join(context.storagePath, 'doq', 'venv', 'Scripts', 'doq.exe');
-      } else {
-        doqPath = path.join(context.storagePath, 'doq', 'venv', 'bin', 'doq');
-      }
-    }
-  }
+  const doqPath = getDoqPath(context);
 
   let builtinInstallPythonCommand = extensionConfig.get('builtin.pythonPath', '');
   if (!builtinInstallPythonCommand) {
@@ -42,21 +29,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
     builtinInstallPythonCommand = getPythonCommand(isRealpath);
   }
 
-  const enableInstallPrompt = extensionConfig.get<boolean>('enableInstallPrompt', true);
-
-  context.subscriptions.push(
-    commands.registerCommand('pydocstring.install', async () => {
-      if (builtinInstallPythonCommand) {
-        await installWrapper(builtinInstallPythonCommand, context, enableInstallPrompt);
-      } else {
-        window.showErrorMessage('python3/python command not found');
-      }
-    })
-  );
+  installCommandFeature.activate(context, builtinInstallPythonCommand);
 
   if (!doqPath) {
     if (builtinInstallPythonCommand) {
-      await installWrapper(builtinInstallPythonCommand, context, enableInstallPrompt);
+      commands.executeCommand('pydocstring.install');
     } else {
       window.showErrorMessage('python3/python command not found');
     }
@@ -107,48 +84,4 @@ export async function activate(context: ExtensionContext): Promise<void> {
   );
 
   docCodeActionFeature.activate(context, outputChannel);
-}
-
-async function installWrapper(pythonCommand: string, context: ExtensionContext, isPrompt: boolean) {
-  if (isPrompt) {
-    const msg = 'Install/Upgrade "doq"?';
-    const ret = await window.showPrompt(msg);
-    if (ret) {
-      try {
-        await doqInstall(pythonCommand, context);
-      } catch (e) {
-        return;
-      }
-    } else {
-      return;
-    }
-  } else {
-    await doqInstall(pythonCommand, context);
-  }
-}
-
-function getPythonCommand(isRealpath?: boolean): string {
-  let res = '';
-
-  try {
-    res = which.sync('python3');
-    if (isRealpath) {
-      res = fs.realpathSync(res);
-    }
-    return res;
-  } catch (e) {
-    // noop
-  }
-
-  try {
-    res = which.sync('python');
-    if (isRealpath) {
-      res = fs.realpathSync(res);
-    }
-    return res;
-  } catch (e) {
-    // noop
-  }
-
-  return res;
 }
