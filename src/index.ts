@@ -38,6 +38,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
     }
   }
 
+  if (!doqPath) return;
+
   runFileCommandFeature.activate(context, outputChannel);
   // internal command
   runActionInternalCommandFeature.activate(context, outputChannel);
