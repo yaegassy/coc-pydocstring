@@ -25,7 +25,7 @@ export async function doqInstall(pythonCommand: string, context: ExtensionContex
   try {
     window.showInformationMessage(`Install doq...`);
     await exec(
-      `${pythonCommand} -m venv ${pathVenv} && ` + `${pathVenvPython} -m pip install -U pip doq==${DOQ_VERSION}`
+      `"${pythonCommand}" -m venv ${pathVenv} && ` + `${pathVenvPython} -m pip install -U pip doq==${DOQ_VERSION}`
     );
     statusItem.hide();
     window.showInformationMessage(`doq: installed!`);
