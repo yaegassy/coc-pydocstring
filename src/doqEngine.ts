@@ -20,7 +20,8 @@ export async function doFormat(
   const extensionConfig = workspace.getConfiguration('pydocstring');
 
   const formatterOption = extensionConfig.get('formatter', 'sphinx');
-  const templatePath = extensionConfig.get('templatePath', '');
+  // Use `workspace.expand` to accommodate the needs of `~` and `$HOME`.
+  const templatePath = workspace.expand(extensionConfig.get<string>('templatePath', ''));
   const isIgnoreException = extensionConfig.get('ignoreException', false);
   const isIgnoreYield = extensionConfig.get('ignoreYield', false);
   const isIgnoreInit = extensionConfig.get('ignoreInit', false);
@@ -47,7 +48,13 @@ export async function doFormat(
     fs.existsSync(path.join(templatePath, 'def.txt')) &&
     fs.existsSync(path.join(templatePath, 'noarg.txt'))
   ) {
-    args.push('--template_path', templatePath);
+    if (templatePath.startsWith('/')) {
+      // absolute path
+      args.push('--template_path', templatePath);
+    } else {
+      // relative path
+      args.push('--template_path', path.join(workspace.root, templatePath));
+    }
   }
 
   if (isIgnoreException) {
