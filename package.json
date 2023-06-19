@@ -1,7 +1,6 @@
 {
   "name": "coc-pydocstring",
   "version": "0.8.3",
-  "doqVersion": "0.9.1",
   "description": "doq (python docstring generator) extension for coc.nvim",
   "author": "yaegassy <yosstools@gmail.com>",
   "license": "MIT",
@@ -138,5 +137,8 @@
         "title": "Show pydocstring output channel"
       }
     ]
+  },
+  "dependencies": {
+    "toml": "^3.0.0"
   }
 }

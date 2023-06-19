@@ -1,10 +1,25 @@
-/**
- * System-wide constants.
- *
- * May be read from package.json
- */
+import fs from 'fs';
+import path from 'path';
+import toml from 'toml';
 
-// @ts-ignore
-import { doqVersion } from '../package.json';
+type PyprojectToml = {
+  tool: {
+    poetry: {
+      dependencies: {
+        [name: string]: string;
+      };
+    };
+  };
+};
 
-export const DOQ_VERSION = doqVersion;
+function getPackageVersion(name: string) {
+  const rootDir = path.resolve(path.dirname(__filename), '..');
+  const filePath = path.join(rootDir, 'pyproject.toml');
+  const fileStr = fs.readFileSync(filePath);
+  const data: PyprojectToml = toml.parse(fileStr.toString());
+  const version = data.tool.poetry.dependencies[name];
+
+  return version;
+}
+
+export const DOQ_VERSION = getPackageVersion('doq');
