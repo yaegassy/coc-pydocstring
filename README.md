@@ -54,7 +54,7 @@ You can also run the installation command manually.
 - `pydocstring.templatePath`: Path to template directory (--template_path), Settings starting with `/` are recognized as `absolute path`, while others are treated as `relative path` from the `workspace root`. Additionally, both `~` and `$HOME` are also available and will be expanded as `absolute path`, default: `""`
 - `pydocstring.ignoreException`: Ignore exception statements (--ignore_exception), default: `false`
 - `pydocstring.ignoreYield`: Ignore yield statements (--ignore_yield), default: `false`
-- `pydocstring.ignoreInit`: Ignore generate docstring to __init__ method (--ignore_init). This option only available at `:CocCommand pydocstring.runFile`, default: `false`
+- `pydocstring.ignoreInit`: Ignore generate docstring to `__init__` method (--ignore_init). This option only available at `:CocCommand pydocstring.runFile`, default: `false`
 - `pydocstring.enableFileAction`: Enable file-level code action, default: `false`
 
 ## Code Actions
