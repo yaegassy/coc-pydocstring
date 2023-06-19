@@ -114,7 +114,7 @@
         "pydocstring.ignoreInit": {
           "type": "boolean",
           "default": false,
-          "description": "Ignore generate docstring to __init__ method. This option only available at `:CocCommand pydocstring.runFile`"
+          "description": "Ignore generate docstring to `__init__` method. This option only available at `:CocCommand pydocstring.runFile`"
         },
         "pydocstring.enableFileAction": {
           "type": "boolean",
