@@ -6,7 +6,7 @@ authors = ["yaegassy <yosstools@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-doq = "0.9.1"
+doq = "0.10.0"
 
 
 [build-system]

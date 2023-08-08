@@ -2,18 +2,23 @@
 
 [[package]]
 name = "doq"
-version = "0.9.1"
+version = "0.10.0"
 description = "Docstring generator"
 optional = false
 python-versions = "*"
 files = [
-    {file = "doq-0.9.1.tar.gz", hash = "sha256:baccc348ddf967c8bf32bfdf54da8326e1dc74f37865e2c176012ad0bc7eea1e"},
+    {file = "doq-0.10.0-py2.py3-none-any.whl", hash = "sha256:19b4a3b776b14f4fbe150fb271e177a5443d563e8de12c4853eee4c1c81992f3"},
+    {file = "doq-0.10.0.tar.gz", hash = "sha256:672b80c1aeb9f02cda3bcbe95b3046e96319385820bacc70662cc486f4c34a86"},
 ]
 
 [package.dependencies]
 jinja2 = "*"
 parso = "*"
 toml = "*"
+
+[package.extras]
+completion = ["shtab"]
+test = ["parameterized", "pytest"]
 
 [[package]]
 name = "jinja2"
@@ -120,4 +125,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "c4ac57aa5bf9b029339d9e440387050f80eb19abe1b3fbb72ccede80454b3e73"
+content-hash = "12f737cffa5eb967d1a64ad4f531dc8b0e9cac3fa7ef8167d3d447b58bd36953"
